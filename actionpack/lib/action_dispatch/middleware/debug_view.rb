@@ -9,17 +9,12 @@ module ActionDispatch
   class DebugView < ActionView::Base # :nodoc:
     RESCUES_TEMPLATE_PATH = File.expand_path("templates", __dir__)
 
-    module CompiledTemplates
-    end
-
-    include CompiledTemplates
-
     def initialize(assigns)
       super([RESCUES_TEMPLATE_PATH], assigns)
     end
 
     def compiled_method_container
-      CompiledTemplates
+      self.class
     end
 
     def debug_params(params)
