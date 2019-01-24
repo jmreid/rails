@@ -1,10 +1,14 @@
-## Rails 6.0.0.beta1 (January 18, 2019) ##
-
 *   ActionView::Template.finalize_compiled_template_methods is deprecated with
     no replacement.
 
+    *tenderlove*
+
 *   config.action_view.finalize_compiled_template_methods is deprecated with
     no replacement.
+
+    *tenderlove*
+
+## Rails 6.0.0.beta1 (January 18, 2019) ##
 
 *   Remove deprecated `image_alt` helper.
 
