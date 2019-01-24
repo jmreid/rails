@@ -2,12 +2,21 @@
 
 require "active_support/core_ext/object/try"
 require "active_support/core_ext/kernel/singleton_class"
+require "active_support/deprecation"
 require "thread"
 
 module ActionView
   # = Action View Template
   class Template
     extend ActiveSupport::Autoload
+
+    def self.finalize_compiled_template_methods
+      ActiveSupport::Deprecation.warn "ActionView::Template.finalize_compiled_template_methods is deprecated and has no effect"
+    end
+
+    def self.finalize_compiled_template_methods=(_)
+      ActiveSupport::Deprecation.warn "ActionView::Template.finalize_compiled_template_methods= is deprecated and has no effect"
+    end
 
     # === Encodings in ActionView::Template
     #
