@@ -1,3 +1,9 @@
+*   `ActionDispatch::SystemTestCase.driven_by` can now be called with a block
+    to define specific browser capabilities.
+
+    *Edouard Chin*
+
+
 ## Rails 6.0.0.beta1 (January 18, 2019) ##
 
 *   Remove deprecated `fragment_cache_key` helper in favor of `combined_fragment_cache_key`.
@@ -14,7 +20,7 @@
 *   Introduce ActionDispatch::HostAuthorization
 
     This is a new middleware that guards against DNS rebinding attacks by
-    white-listing the allowed hosts a request can be made to.
+    explicitly permitting the hosts a request can be made to.
 
     Each host is checked with the case operator (`#===`) to support `RegExp`,
     `Proc`, `IPAddr` and custom objects as host allowances.
@@ -154,7 +160,7 @@
 
     *Aaron Kromer*
 
-*   Pass along arguments to underlying `get` method in `follow_redirect!`.
+*   Pass along arguments to underlying `get` method in `follow_redirect!`
 
     Now all arguments passed to `follow_redirect!` are passed to the underlying
     `get` method. This for example allows to set custom headers for the
