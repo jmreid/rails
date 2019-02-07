@@ -51,22 +51,23 @@ module ActionDispatch
     end
 
     def serve(request)
-      path      = request.path_info
-      gzip_path = gzip_file_path(path)
+      path            = request.path_info
+      compressed_path = compressed_file_path(path)
 
-      if gzip_path && gzip_encoding_accepted?(request)
-        request.path_info           = gzip_path
+      if compressed_path && brotli_or_gzip_encoding_accepted?(request)
+        request.path_info           = compressed_path
         status, headers, body       = @file_server.call(request.env)
         if status == 304
           return [status, headers, body]
         end
-        headers["Content-Encoding"] = "gzip"
+
+        headers["Content-Encoding"] = brotli_file_ext?(compressed_path) ? "br" : "gzip"
         headers["Content-Type"]     = content_type(path)
       else
         status, headers, body = @file_server.call(request.env)
       end
 
-      headers["Vary"] = "Accept-Encoding" if gzip_path
+      headers["Vary"] = "Accept-Encoding" if compressed_path
 
       [status, headers, body]
     ensure
@@ -86,14 +87,29 @@ module ActionDispatch
         request.accept_encoding.any? { |enc, quality| enc =~ /\bgzip\b/i }
       end
 
-      def gzip_file_path(path)
-        can_gzip_mime = content_type(path) =~ /\A(?:text\/|application\/javascript)/
+      def brotli_encoding_accepted?(request)
+        request.accept_encoding.any? { |enc, quality| enc =~ /\bbr\b/i }
+      end
+
+      def brotli_or_gzip_encoding_accepted?(request)
+        request.accept_encoding.any? { |enc, quality| enc =~ /\bbr\b|\bgzip\b/i }
+      end
+
+      def compressed_file_path(path)
+        can_compress_mime = content_type(path) =~ /\A(?:text\/|application\/javascript)/
         gzip_path     = "#{path}.gz"
-        if can_gzip_mime && File.exist?(File.join(@root, ::Rack::Utils.unescape_path(gzip_path)))
+        brotli_path     = "#{path}.br"
+        if can_compress_mime && File.exist?(File.join(@root, ::Rack::Utils.unescape_path(brotli_path)))
+          brotli_path
+        elsif can_compress_mime && File.exist?(File.join(@root, ::Rack::Utils.unescape_path(gzip_path)))
           gzip_path
         else
           false
         end
+      end
+
+      def brotli_file_ext?(path)
+        File.extname(path) == ".br"
       end
   end
 
